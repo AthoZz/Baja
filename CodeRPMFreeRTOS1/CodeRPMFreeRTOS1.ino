@@ -106,12 +106,14 @@ void PrintRPM( void * pvParameters )
       Serial.println("RPM du tachymètre 1 : " + String(averageRPM1));
       byte * RPM_Send = (byte *) &averageRPM1;  // À voir si on veut envoyer des floats ou des int c'est suffisant
       //Serial.write(short(averageRPM1));       // A décommenter si on veut juste des valeurs entières
+            // À voir si il faut pas envoyer un string avec un \n a la place
       Serial.write(RPM_Send, sizeof(averageRPM1));
 
 
       Serial.println("RPM du tachymètre 2 : " + String(averageRPM2));
       byte * RPM2_Send = (byte * ) &averageRPM2;
       //Serial.write(short(averageRPM2));
+      // À voir si il faut pas envoyer un string avec un \n a la place
       Serial.write(RPM2_Send, sizeof(averageRPM2));  // A décommenter si on veut juste des valeurs entières
       
 
