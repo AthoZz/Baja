@@ -2,6 +2,7 @@ import serial
 import serial.tools.list_ports as sr
 import pandas as pd
 import time
+import os
 
 
 valueList = []
@@ -37,6 +38,14 @@ def aff_ports(portList):
 def select_port(all_port):
     # on demande à l'utilisateur à rentrer le numéro qui correspond au COM
     # sur lequel il veut se connecter, selected correspond alors à "COMx"
+    while len(all_port) == 0:
+        time.sleep(1)
+        os.system('cls')
+        get_ports()
+        print("Avaiable PORT")
+        print("----------------------------------")
+        print("----------------------------------")
+    aff_ports()
     selected = "COM" + str(input("Select port : COM"))
 
     # on créer une connection série avec ce port
@@ -52,7 +61,7 @@ def main():
     # all_ports correspond à une liste de tout les ports sur l'ordinateur
     all_ports = get_ports()
     # affiche les ports disponibles
-    aff_ports(get_ports())
+    #aff_ports(get_ports())
 
     # retoune le port sélectionné (COMx) ainsi que l'instantiation de la connection série (serialInst)
     Port, serialInst = select_port(all_ports)
