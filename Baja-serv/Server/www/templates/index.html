@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Baja Analytics Board</title>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='png/img.png') }}" alt="Logo" class="logo">
+            <h1>Baja Analytics Board</h1>
+        </div>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#control-panel">Panneau de Contrôle</a></li>
+            <li><a href="#analytics">Analytique</a></li>
+        </ul>
+    </nav>
+    <main>
+        <section id="control-panel">
+            <h2>Panneau de Contrôle</h2>
+            <div>
+                <button id="startButton">Start</button>
+                <button id="stopButton">Stop</button>
+                <p>Current State: <span id="currentState">Stopped</span></p>
+            </div>
+            <div>
+                <button id="resetButton">Réinitialiser</button>
+                <p id="resetResult"></p>
+            </div>
+        </section>
+        <section id="analytics">
+            <h2>Analytique</h2>
+            <button id="updateGraphsButton">Update Graphs</button>
+            <div class="graph-container">
+                <div class="graph">
+                    <h3>RPM Counter 1</h3>
+                    <img id="rpm1Graph" src="" alt="RPM 1 Graph">
+                </div>
+                <div class="graph">
+                    <h3>RPM Counter 2</h3>
+                    <img id="rpm2Graph" src="" alt="RPM 2 Graph">
+                </div>
+                <div class="graph">
+                    <h3>Strain Gage</h3>
+                    <img id="strainGageGraph" src="" alt="Strain Gage Graph">
+                </div>
+            </div>
+        </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
