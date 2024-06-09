@@ -50,11 +50,34 @@ if __name__ == '__main__':
 
 
 
-
-
     FakeArduino = Input(course)
     FakeArduino.Activate()
 
-    api.app.run(host='0.0.0.0', port=5000)
+    #context = ('./SSL/cert.pem', './SSL/key.pem')
+    #api.app.run(host='0.0.0.0', port=5000,ssl_context = context )
+
+    import threading
+    import ssl
+
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    context.load_cert_chain('./SSL/cert.pem', './SSL/key.pem')
+
+
+    def run_https():
+        api.app.run(host='0.0.0.0', port=5000, ssl_context=context) #http server pour unity car besoin SSL
+
+
+    def run_http():
+        api.app.run(host='0.0.0.0', port=80)
+
+
+    https_thread = threading.Thread(target=run_https)
+    http_thread = threading.Thread(target=run_http)
+
+    https_thread.start()
+    http_thread.start()
+
+    https_thread.join()
+    http_thread.join()
 
 

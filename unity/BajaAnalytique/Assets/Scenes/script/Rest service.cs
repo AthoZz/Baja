@@ -1,42 +1,37 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class Restservice : MonoBehaviour
+public class RestService : MonoBehaviour
 {
     public Color startColor = Color.red;
     public Color endColor = Color.green;
     public int id_gage = 5;
-    public float requestInterval = 1.0f;  // Intervalle entre les requêtes en secondes
-    private float timer;
-
+    public float requestInterval = 0.5f;  // Intervalle ajusté entre les requêtes en secondes
     private float value = 0;
 
-    // Start is called before the first frame update
     void Start()
     {
-        timer = requestInterval;
-        //renderer = GetComponent<Renderer>();
+        StartCoroutine(RequestRoutine());
     }
 
-    // Update is called once per frame
     void Update()
     {
-         timer -= Time.deltaTime;  // Décrémenter le timer à chaque frame
-
-        if (timer <= 0)
+        Renderer renderer = GetComponent<Renderer>();
+        if (renderer != null)
         {
-            string path = "http://127.0.0.1:5000/get-last-strain-gage/" + id_gage.ToString();
-            Debug.Log(path);
-            StartCoroutine(GetRequest(path));
-            timer = requestInterval;  // Réinitialiser le timer après chaque requête
+            renderer.material.color = Color.Lerp(startColor, endColor, value);
         }
-        if (GetComponent<Renderer>() != null)
+    }
+
+    IEnumerator RequestRoutine()
+    {
+        while (true)
         {
-            Renderer renderer = GetComponent<Renderer>();
-            renderer.material.color = Color.Lerp(startColor, endColor, value);//Color.Lerp(startColor, endColor, value);
-           
+            Debug.Log("Requête envoyée");
+            string path = "https://100.107.141.200:5000/get-last-strain-gage/" + id_gage.ToString();  // Remplacez par votre URL
+            yield return StartCoroutine(GetRequest(path));
+            yield return new WaitForSeconds(requestInterval);  // Attendre l'intervalle spécifié avant de continuer
         }
     }
 
@@ -44,17 +39,20 @@ public class Restservice : MonoBehaviour
     {
         using (UnityWebRequest webRequest = UnityWebRequest.Get(uri))
         {
-            // Send the request and wait for a response
+            // Ajouter la gestion des certificats pour ignorer les erreurs SSL
+            webRequest.certificateHandler = new CertificateHandlerOverride();
+
+            // Envoi de la requête et attente de la réponse
             yield return webRequest.SendWebRequest();
 
             if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
             {
-                Debug.LogError(": Error: " + webRequest.error);
+                Debug.LogError("Erreur: " + webRequest.error);
             }
             else
             {
-                // Show results as text
-                Debug.Log(": Received: " + webRequest.downloadHandler.text);
+                // Affichage des résultats sous forme de texte
+                Debug.Log("Réponse reçue: " + webRequest.downloadHandler.text);
                 strain_gage_Data sensorData = JsonUtility.FromJson<strain_gage_Data>(webRequest.downloadHandler.text);
                 Debug.Log("Strain Gage 5: " + sensorData.strain_gage);
                 value = sensorData.strain_gage;
@@ -63,7 +61,17 @@ public class Restservice : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class strain_gage_Data
 {
     public float strain_gage;
+}
+
+public class CertificateHandlerOverride : CertificateHandler
+{
+    protected override bool ValidateCertificate(byte[] certificateData)
+    {
+        // Toujours retourner true pour ignorer les erreurs de certificat SSL.
+        return true;
+    }
 }
