@@ -230,5 +230,51 @@ class DataBase:
             return {"strain_gage": None}
         finally:
             conn.close()
+    def getLasvalueAccelerationsG(self, imu_id): #non tester
+        """Récupère les données d'accélération pour un ID donné et les convertit en g."""
+        conn = self.get_connection()
+        if conn is None:
+            return None
+        try:
+            c = conn.cursor()
+
+            # Détermine les noms de colonnes dynamiquement en fonction de l'ID
+            accel_x_col = f"accel_{imu_id}_x"
+            accel_y_col = f"accel_{imu_id}_y"
+            accel_z_col = f"accel_{imu_id}_z"
+
+            query = f"""
+                        SELECT {accel_x_col}, {accel_y_col}, {accel_z_col}
+                        FROM sensors_data
+                        WHERE id = ?
+                    """
+            c.execute(query, (imu_id,))
+            row = c.fetchone()
+            if row is None:
+                print(f"Aucune donnée trouvée pour l'ID: {imu_id}")
+                return None
+
+            # Extraction des valeurs d'accélération
+            accel_x, accel_y, accel_z = row[0], row[1], row[2]
+
+            # Conversion en g
+            accel_x_g = self.convert_to_g(accel_x)
+            accel_y_g = self.convert_to_g(accel_y)
+            accel_z_g = self.convert_to_g(accel_z)
+
+            return {
+                "accel_x_g": accel_x_g,
+                "accel_y_g": accel_y_g,
+                "accel_z_g": accel_z_g
+            }
+        except sqlite3.Error as e:
+            print(f"Erreur lors de la récupération des données: {e}")
+            return None
+        finally:
+            conn.close()
+
+    def convert_to_g(self, value):
+        """Convertit une valeur d'accélération de m/s² en g."""
+        return value / 9.81
 
 

@@ -41,3 +41,7 @@ class BasicGraph():
         plt.close()
 
         return img
+
+    def convert_to_g(self, value):
+        """Convertit une valeur d'accélération de m/s² en g."""
+        return value / 9.81

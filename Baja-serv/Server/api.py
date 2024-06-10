@@ -139,7 +139,15 @@ def get_last_strain_gage(strain_gage_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
+@app.route('/get-last-imu-g/<int:strain_gage_id>', methods=['GET'])
+def get_last_imu_g(strain_gage_id):
+    try:
+        result = Main.db.getLasvalueAccelerationsG(strain_gage_id)
+        return jsonify(result), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=8080)
