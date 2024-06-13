@@ -30,8 +30,8 @@ class BasicGraph():
         plt.figure()
         plt.plot(timestamps, values, marker='o')
         plt.xlabel('Time')
-        plt.ylabel('RPM Counter 1')
-        plt.title('RPM Counter 1 Over Time')
+        plt.ylabel('Value')
+        plt.title('Data Over Time')
         plt.gcf().autofmt_xdate()  # Pour formater les dates sur l'axe X
 
         # Enregistrer le graphique dans un objet BytesIO
