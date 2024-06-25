@@ -139,6 +139,16 @@ def get_last_strain_gage(strain_gage_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/get-last-RPMS', methods=['GET'])
+def get_last_strain_RPMS():
+    try:
+        result = Main.db.getLasvalueRPMS()
+        return jsonify(result), 200
+    except ValueError as ve:
+        return jsonify({"error": str(ve)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 @app.route('/get-last-imu-g/<int:strain_gage_id>', methods=['GET'])
 def get_last_imu_g(strain_gage_id):
     try:

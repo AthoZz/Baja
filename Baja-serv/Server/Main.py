@@ -41,17 +41,16 @@ def get_all_donne_json():
 if __name__ == '__main__':
 
     initDB()
-    #db.delete_all_tables()
     db.creatTable()
     course = race(db)
     Main.course = course
-    Main.data =  donne(db, course)
+    Main.data = donne(db, course)
     Main.basicGraph = BasicGraph(Main.data)
 
 
 
-    FakeArduino = Input(course)
-    FakeArduino.Activate()
+    #FakeArduino = Input(course)
+    #FakeArduino.Activate()
 
     #context = ('./SSL/cert.pem', './SSL/key.pem')
     #api.app.run(host='0.0.0.0', port=5000,ssl_context = context )
@@ -65,7 +64,6 @@ if __name__ == '__main__':
 
     def run_https():
         api.app.run(host='0.0.0.0', port=5000, ssl_context=context) #http server pour unity car besoin SSL
-
 
     def run_http():
         api.app.run(host='0.0.0.0', port=80)

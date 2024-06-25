@@ -230,6 +230,39 @@ class DataBase:
             return {"strain_gage": None}
         finally:
             conn.close()
+
+    def getLasvalueRPMS(self):
+
+        conn = self.get_connection()
+        try:
+            c = conn.cursor()
+            query = f"""
+                       SELECT rpm_counter1, rpm_counter2 , speed_counter
+                       FROM sensors_data
+                       ORDER BY timestamp DESC
+                       LIMIT 1
+                   """
+            c.execute(query)
+            row = c.fetchone()
+            if row is None:
+                print(f"Aucune donnée trouvée pour l'ID:")
+                return None
+
+            # Extraction des valeurs d'accélération
+            counter1, counter2, speed = row[0], row[1], row[2]
+
+
+            return {
+                "rpm_counter1": counter1,
+                "rpm_counter2": counter2,
+                "speed_counter": speed
+            }
+        except sqlite3.Error as e:
+            print(f"Erreur lors de la récupération des données: {e}")
+            return None
+        finally:
+            conn.close()
+
     def getLasvalueAccelerationsG(self, imu_id): #non tester
         """Récupère les données d'accélération pour un ID donné et les convertit en g."""
         conn = self.get_connection()
@@ -243,13 +276,18 @@ class DataBase:
             accel_y_col = f"accel_{imu_id}_y"
             accel_z_col = f"accel_{imu_id}_z"
 
+            # Construisez la requête SQL avec les noms de colonnes inclus dans la chaîne
             query = f"""
-                        SELECT {accel_x_col}, {accel_y_col}, {accel_z_col}
-                        FROM sensors_data
-                        WHERE id = ?
-                    """
-            c.execute(query, (imu_id,))
+                            SELECT {accel_x_col}, {accel_y_col}, {accel_z_col}
+                            FROM sensors_data
+                            ORDER BY timestamp DESC
+                            LIMIT 1
+                        """
+
+            print(f"Executing query: {query}")
+            c.execute(query)
             row = c.fetchone()
+
             if row is None:
                 print(f"Aucune donnée trouvée pour l'ID: {imu_id}")
                 return None
@@ -261,6 +299,8 @@ class DataBase:
             accel_x_g = self.convert_to_g(accel_x)
             accel_y_g = self.convert_to_g(accel_y)
             accel_z_g = self.convert_to_g(accel_z)
+
+            print(f"accel_x_g: {accel_x_g}, accel_y_g: {accel_y_g}, accel_z_g: {accel_z_g}")
 
             return {
                 "accel_x_g": accel_x_g,
