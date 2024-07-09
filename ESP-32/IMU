@@ -103,6 +103,7 @@ void loop() {
   //Serial.println(a.acceleration.z);
   //Serial.println(" m/s^2");
   JsonDocument doc;
+  doc["ID"] = "1";
   doc["x"] = a.acceleration.x;
   doc["y"] = a.acceleration.y;
   doc["z"] = a.acceleration.z;
