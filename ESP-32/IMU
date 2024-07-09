@@ -3,8 +3,11 @@
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <ArduinoJson.h>
 
 Adafruit_MPU6050 mpu;
+
+
 
 void setup(void) {
   Serial.begin(115200);
@@ -93,14 +96,18 @@ void loop() {
 
   /* Print out the values */
   //Serial.print("Acceleration X: ");
-  Serial.println(a.acceleration.x);
+  //Serial.println(a.acceleration.x);
   //Serial.print(", Y: ");
-  Serial.println(a.acceleration.y);
+  //Serial.println(a.acceleration.y);
   //Serial.print(", Z: ");
-  Serial.println(a.acceleration.z);
+  //Serial.println(a.acceleration.z);
   //Serial.println(" m/s^2");
+  JsonDocument doc;
+  doc["x"] = a.acceleration.x;
+  doc["y"] = a.acceleration.y;
+  doc["z"] = a.acceleration.z;
 
-
+  serializeJson(doc, Serial);
   //Serial.println("");
   delay(100);
 }
